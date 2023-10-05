@@ -6,6 +6,7 @@ package com.sky.service.impl;/**
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.CategoryDTO;
@@ -52,10 +53,10 @@ public class CategoryServiceImpl implements CategoryService {
         BeanUtils.copyProperties(categoryDTO,category);
         category.setStatus(StatusConstant.DISABLE);
         LocalDateTime time=LocalDateTime.now();
-        category.setCreateTime(time);
-        category.setCreateUser(BaseContext.getCurrentId());
-        category.setUpdateTime(time);
-        category.setUpdateUser(BaseContext.getCurrentId());
+//        category.setCreateTime(time);
+//        category.setCreateUser(BaseContext.getCurrentId());
+//        category.setUpdateTime(time);
+//        category.setUpdateUser(BaseContext.getCurrentId());
         categoryMapper.insert(category);
     }
 
@@ -78,13 +79,13 @@ public class CategoryServiceImpl implements CategoryService {
         dishLambdaQueryWrapper.eq(Dish::getCategoryId,id);
         Long dishCount = dishMapper.selectCount(dishLambdaQueryWrapper);
         if (dishCount>0){
-            throw new DeletionNotAllowedException("存在关联菜品，删除失败");
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
         }
         LambdaQueryWrapper<Setmeal> setmealLambdaQueryWrapper=new LambdaQueryWrapper<>();
         setmealLambdaQueryWrapper.eq(Setmeal::getCategoryId,id);
         Long setmealCount = setmealMapper.selectCount(setmealLambdaQueryWrapper);
         if(setmealCount>0){
-            throw new DeletionNotAllowedException("存在关联套餐，删除失败");
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
         }
         categoryMapper.deleteById(id);
     }
@@ -93,16 +94,16 @@ public class CategoryServiceImpl implements CategoryService {
     public void updateCategory(CategoryDTO categoryDTO) {
         Category category=new Category();
         BeanUtils.copyProperties(categoryDTO,category);
-        category.setUpdateTime(LocalDateTime.now());
-        category.setUpdateUser(BaseContext.getCurrentId());
+//        category.setUpdateTime(LocalDateTime.now());
+//        category.setUpdateUser(BaseContext.getCurrentId());
         categoryMapper.updateById(category);
     }
 
     @Override
     public void updateStatus(Long id, Integer status) {
         Category category = Category.builder().id(id).status(status).build();
-        category.setUpdateTime(LocalDateTime.now());
-        category.setUpdateUser(BaseContext.getCurrentId());
+//        category.setUpdateTime(LocalDateTime.now());
+//        category.setUpdateUser(BaseContext.getCurrentId());
         categoryMapper.updateById(category);
     }
 

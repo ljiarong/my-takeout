@@ -1,15 +1,14 @@
 package com.sky.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.github.yulichang.base.MPJBaseMapper;
-import com.sky.entity.Dish;
+import com.sky.entity.DishFlavor;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * ClassName: DishMapper
+ * ClassName: DishFlavorMapper
  * Package: com.sky.mapper
  */
 @Mapper
-public interface DishMapper extends MPJBaseMapper<Dish> {
+public interface DishFlavorMapper extends BaseMapper<DishFlavor> {
 
 }

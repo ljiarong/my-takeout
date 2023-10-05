@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: dev   #开发环境配置文件
   main:
     allow-circular-references: true
   datasource:
@@ -12,6 +12,13 @@ spring:
       url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: ${sky.datasource.username}
       password: ${sky.datasource.password}
+#  mvc:
+#    static-path-pattern: /public/**
+#    #    访问url
+#  #    (前台)静态资源路径
+#  web:
+#    resources:
+#      static-locations: classpath:/public/
 
 mybatis:
   #mapper配置文件
@@ -37,3 +44,9 @@ sky:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+  alioss:
+    access-key-id: ${sky.alioss.access-key-id}
+    bucket-name: ${sky.alioss.bucket-name}
+    access-key-secret: ${sky.alioss.access-key-secret}
+    endpoint: ${sky.alioss.endpoint}
+
