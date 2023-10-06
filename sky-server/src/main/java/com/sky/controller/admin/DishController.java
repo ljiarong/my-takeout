@@ -5,9 +5,11 @@ package com.sky.controller.admin;/**
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +64,18 @@ public class DishController {
         return Result.success();
     }
 
-    //TODO:修改菜品状态
+    @PostMapping("status/{status}")
+    public Result updateState(@PathVariable(name = "status") Integer status,
+                              @RequestParam Long id){
+        log.info("DishController的updateState方法执行中，参数为{}",status,id);
+        dishService.updateState(id,status);
+        return Result.success();
+    }
+
+    @GetMapping("list")
+    public Result<List<Dish>> getDishByCategoryId(@RequestParam Long categoryId){
+        log.info("DishController的getDishByCategoryId方法执行中，参数为{}",categoryId);
+        List<Dish> dishList=dishService.getDishByCategoryId(categoryId);
+        return Result.success(dishList);
+    }
 }

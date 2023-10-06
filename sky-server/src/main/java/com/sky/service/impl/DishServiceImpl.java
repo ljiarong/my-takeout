@@ -14,15 +14,9 @@ import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
-import com.sky.entity.Category;
-import com.sky.entity.Dish;
-import com.sky.entity.DishFlavor;
-import com.sky.entity.SetmealDish;
+import com.sky.entity.*;
 import com.sky.exception.DeletionNotAllowedException;
-import com.sky.mapper.CategoryMapper;
-import com.sky.mapper.DishFlavorMapper;
-import com.sky.mapper.DishMapper;
-import com.sky.mapper.SetmealDishMapper;
+import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishOverViewVO;
@@ -53,6 +47,8 @@ public class DishServiceImpl extends ServiceImpl<DishFlavorMapper,DishFlavor> im
     private SetmealDishMapper setmealDishMapper;
     @Autowired
     private DishFlavorMapper dishFlavorMapper;
+    @Autowired
+    private SetmealMapper setmealMapper;
     @Override
     @Transactional
     public void addDish(DishDTO dishDTO) {
@@ -144,5 +140,32 @@ public class DishServiceImpl extends ServiceImpl<DishFlavorMapper,DishFlavor> im
             }
         }
         saveBatch(dishFlavorList);
+    }
+
+    @Override
+    public void updateState(Long id, Integer status) {
+        Dish dish= Dish.builder().id(id).status(status).build();
+        dishMapper.updateById(dish);
+        if(status.equals(StatusConstant.DISABLE)){
+            LambdaQueryWrapper<SetmealDish> setmealDishLambdaQueryWrapper=
+                    new LambdaQueryWrapper<>();
+            setmealDishLambdaQueryWrapper.select(SetmealDish::getSetmealId)
+                    .eq(SetmealDish::getDishId,id);
+            List<Object> list = setmealDishMapper.selectObjs(setmealDishLambdaQueryWrapper);
+            for (Object o : list) {
+                Long o1 = (Long) o;
+                Setmeal setmeal= Setmeal.builder().id(o1).status(StatusConstant.DISABLE).build();
+                setmealMapper.updateById(setmeal);
+            }
+        }
+    }
+
+    @Override
+    public List<Dish> getDishByCategoryId(Long categoryId) {
+        LambdaQueryWrapper<Dish> dishLambdaQueryWrapper=new LambdaQueryWrapper<>();
+        dishLambdaQueryWrapper.eq(Dish::getCategoryId,categoryId);
+        dishLambdaQueryWrapper.eq(Dish::getStatus,StatusConstant.ENABLE);//状态要启售的
+        List<Dish> dishList = dishMapper.selectList(dishLambdaQueryWrapper);
+        return dishList;
     }
 }
