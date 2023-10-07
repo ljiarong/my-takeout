@@ -21,6 +21,7 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -143,5 +144,27 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealDishMapper,SetmealDis
             }
             setmealMapper.updateById(setmeal);
         }
+    }
+
+    @Override
+    public List<Setmeal> getListByCategoryId(Setmeal setmeal) {
+        LambdaQueryWrapper<Setmeal> setmealLambdaQueryWrapper=new LambdaQueryWrapper<>();
+        setmealLambdaQueryWrapper.eq(Setmeal::getCategoryId,setmeal.getCategoryId())
+                        .eq(Setmeal::getStatus,setmeal.getStatus());
+        List<Setmeal> setmeals = setmealMapper.selectList(setmealLambdaQueryWrapper);
+        return setmeals;
+    }
+
+    @Override
+    public List<DishItemVO> getDishItemById(Long id) {
+        MPJLambdaWrapper<SetmealDish> setmealDishMPJLambdaWrapper=new MPJLambdaWrapper<>();
+        setmealDishMPJLambdaWrapper.select(Dish::getName)
+                .select(SetmealDish::getCopies)
+                .select(Dish::getImage)
+                .select(Dish::getDescription)
+                .eq(SetmealDish::getSetmealId,id)
+                .leftJoin(Dish.class,Dish::getId,SetmealDish::getDishId);
+        List<DishItemVO> dishItemVOS = setmealDishMapper.selectJoinList(DishItemVO.class, setmealDishMPJLambdaWrapper);
+        return dishItemVOS;
     }
 }

@@ -168,4 +168,25 @@ public class DishServiceImpl extends ServiceImpl<DishFlavorMapper,DishFlavor> im
         List<Dish> dishList = dishMapper.selectList(dishLambdaQueryWrapper);
         return dishList;
     }
+
+    @Override
+    public List<DishVO> listWithFlavor(Dish dish) {
+        MPJLambdaWrapper<Dish> dishMPJLambdaWrapper=new MPJLambdaWrapper<>();
+        dishMPJLambdaWrapper
+                .selectAll(Dish.class)
+                .eq(dish.getCategoryId()!=null,Dish::getCategoryId,dish.getCategoryId())
+                .eq(dish.getStatus()!=null,Dish::getStatus,dish.getStatus())
+                .selectAs(Category::getName,DishVO::getCategoryName)
+                .leftJoin(Category.class,Category::getId,Dish::getCategoryId);
+
+
+        List<DishVO> list = dishMapper.selectJoinList(DishVO.class,dishMPJLambdaWrapper);
+        for (DishVO dishVO : list) {
+            LambdaQueryWrapper<DishFlavor> dishFlavorLambdaQueryWrapper=new LambdaQueryWrapper<>();
+            dishFlavorLambdaQueryWrapper.eq(DishFlavor::getDishId,dishVO.getId());
+            List<DishFlavor> dishFlavors = dishFlavorMapper.selectList(dishFlavorLambdaQueryWrapper);
+            dishVO.setFlavors(dishFlavors);
+        }
+        return list;
+    }
 }

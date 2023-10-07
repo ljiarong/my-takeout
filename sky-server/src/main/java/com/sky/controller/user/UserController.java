@@ -3,13 +3,35 @@ package com.sky.controller.user;/**
  * Package: com.sky.controller.user
  */
 
+import com.alibaba.fastjson.JSONObject;
+import com.sky.constant.JwtClaimsConstant;
+import com.sky.dto.UserLoginDTO;
+import com.sky.entity.User;
+import com.sky.properties.JwtProperties;
+import com.sky.properties.WeChatProperties;
 import com.sky.result.Result;
+import com.sky.service.UserService;
+import com.sky.utils.JwtUtil;
+import com.sky.vo.UserLoginVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @program: my-takeout
@@ -18,20 +40,28 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author: ljr
  *
- * @create: 2023-10-06 20:17
+ * @create: 2023-10-07 19:45
  **/
 @RestController
-@RequestMapping("user/shop")
+@RequestMapping("user/user")
 @Slf4j
 public class UserController {
-    public static final String KEY="SHOP_STATUS";
-    @Autowired
-    private RedisTemplate redisTemplate;
 
-    @GetMapping("status")
-    public Result<Integer> getShopStatus(){
-        log.info("UserController的getShopStatus方法执行中，参数为{}");
-        Integer status = (Integer) redisTemplate.opsForValue().get(KEY);
-        return Result.success(status);
+    @Autowired
+    private JwtProperties jwtProperties;
+    @Autowired
+    private UserService userService;
+    @PostMapping("login")
+    public Result<UserLoginVO> userLogin(@RequestBody UserLoginDTO userLoginDTO) throws Exception{
+        log.info("UserController的userLogin方法执行中，参数为{}",userLoginDTO);
+        User user =userService.login(userLoginDTO);
+        Map<String,Object> claims=new HashMap<>();
+        claims.put(JwtClaimsConstant.USER_ID,user.getId());
+        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(),
+                jwtProperties.getUserTtl(),
+                claims);
+        UserLoginVO vo = UserLoginVO.builder().id(user.getId()).openid(user.getOpenid()).token(token).build();
+        //TODO:我觉得这里返回token就可以了，但是他文档将id和openid一起返回了，我也就这样写了
+        return Result.success(vo);
     }
 }
