@@ -32,17 +32,31 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         LocalDateTime time= LocalDateTime.now();
         Long userId= BaseContext.getCurrentId();
-        metaObject.setValue(AutoFillConstant.UPDATE_TIME,time);
-        metaObject.setValue(AutoFillConstant.UPDATE_USER,userId);
-        metaObject.setValue(AutoFillConstant.CREATE_TIME,time);
-        metaObject.setValue(AutoFillConstant.CREATE_USER,userId);
+        if (metaObject.hasSetter(AutoFillConstant.UPDATE_TIME))
+        {
+            metaObject.setValue(AutoFillConstant.UPDATE_TIME, time);
+        }
+        if (metaObject.hasSetter(AutoFillConstant.UPDATE_USER)) {
+            metaObject.setValue(AutoFillConstant.UPDATE_USER, userId);
+        }
+        if(metaObject.hasSetter(AutoFillConstant.CREATE_TIME)) {
+            metaObject.setValue(AutoFillConstant.CREATE_TIME, time);
+        }
+        if (metaObject.hasSetter(AutoFillConstant.CREATE_USER)) {
+            metaObject.setValue(AutoFillConstant.CREATE_USER, userId);
+        }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         LocalDateTime time= LocalDateTime.now();
         Long userId= BaseContext.getCurrentId();
-        metaObject.setValue(AutoFillConstant.UPDATE_TIME,time);
-        metaObject.setValue(AutoFillConstant.UPDATE_USER,userId);
+        if (metaObject.hasSetter(AutoFillConstant.UPDATE_TIME))
+        {
+            metaObject.setValue(AutoFillConstant.UPDATE_TIME, time);
+        }
+        if (metaObject.hasSetter(AutoFillConstant.UPDATE_USER)) {
+            metaObject.setValue(AutoFillConstant.UPDATE_USER, userId);
+        }
     }
 }

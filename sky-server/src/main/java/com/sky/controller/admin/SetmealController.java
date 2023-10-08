@@ -11,6 +11,7 @@ import com.sky.service.SetmealService;
 import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class SetmealController {
     @Autowired
     private SetmealService setmealService;
     @PostMapping
+    @CacheEvict(key = "'setmeal_'+#setmealDTO.categoryId",value = "Setmeal")
     public Result addSetmeal(@RequestBody SetmealDTO setmealDTO){
         log.info("SetmealController的addSetmeal方法执行中，参数为{}",setmealDTO);
         setmealService.addSetmeal(setmealDTO);
@@ -45,6 +47,7 @@ public class SetmealController {
         return Result.success(pageResult);
     }
     @DeleteMapping
+    @CacheEvict(value = "Setmeal",allEntries = true)
     public Result deleteSetmeal(@RequestParam List<Long> ids){
         log.info("SetmealController的deleteSetmeal方法执行中，参数为{}",ids);
         setmealService.deleteSetmeal(ids);
@@ -57,12 +60,14 @@ public class SetmealController {
         return Result.success(setmealVO);
     }
     @PutMapping
+    @CacheEvict(value = "Setmeal",allEntries = true)
     public Result updateSetmeal(@RequestBody SetmealDTO setmealDTO){
         log.info("SetmealController的updateSetmeal方法执行中，参数为{}",setmealDTO);
         setmealService.updateSetmeal(setmealDTO);
         return Result.success();
     }
     @PostMapping("status/{status}")
+    @CacheEvict(value = "Setmeal",allEntries = true)
     public Result updateStatus(@PathVariable(value = "status") Integer status,@RequestParam Long id){
         log.info("SetmealController的updateStatus方法执行中，参数为{}",id,status);
         setmealService.updateStatus(id,status);

@@ -11,6 +11,8 @@ import com.sky.vo.DishItemVO;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,8 @@ import java.util.List;
 public class SetmealController {
     @Autowired
     private SetmealService setmealService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 条件查询
@@ -40,9 +44,10 @@ public class SetmealController {
      * @param categoryId
      * @return
      */
+    @Cacheable(key = "'setmeal_'+#categoryId",value = "Setmeal")
     @GetMapping("/list")
     public Result<List<Setmeal>> list(Long categoryId) {
-        log.info("SetmealController的list方法执行中，参数为{}");
+        log.info("SetmealController的list方法执行中，参数为{}",categoryId);
         Setmeal setmeal = new Setmeal();
         setmeal.setCategoryId(categoryId);
         setmeal.setStatus(StatusConstant.ENABLE);
@@ -58,6 +63,7 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/dish/{id}")
+//    @Cacheable(value = "Setmeal:Item",key = "'setmeal_item_'+#id")    //由于关联了菜品，所以当菜品更新时套餐项目的缓存也要更新，太麻烦
     public Result<List<DishItemVO>> dishList(@PathVariable("id") Long id) {
         List<DishItemVO> list = setmealService.getDishItemById(id);
         return Result.success(list);
