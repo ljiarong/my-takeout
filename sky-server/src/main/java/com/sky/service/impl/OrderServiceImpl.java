@@ -17,6 +17,7 @@ import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
+import com.sky.server.WebSocketServer;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
@@ -61,6 +62,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDetailMapper,OrderDetail>
     private UserMapper userMapper;
     @Autowired
     private OrderDetailMapper orderDetailMapper;
+    @Autowired
+    private WebSocketServer webSocketServer;
     @Override
     @Transactional
     public OrderSubmitVO orderSubmit(OrdersSubmitDTO ordersSubmitDTO) {
@@ -125,6 +128,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDetailMapper,OrderDetail>
                 .build();
 
         orderMapper.updateById(orders);
+
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("type",1);
+        jsonObject.put("orderId",orders.getId());
+        jsonObject.put("content","订单号:"+orders.getNumber());
+        webSocketServer.sendToAllClient(jsonObject.toJSONString());
     }
 
     @Override
@@ -177,7 +186,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDetailMapper,OrderDetail>
 
     @Override
     public OrderVO getOrder(Long id) {
-        return getOrderVoByOrderId(id);
+        return getOrderVoByOrderId(id);      //TODO:所有用户端根据id查询的接口可以再加一下userid判断
     }
 
     @Override
@@ -321,6 +330,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderDetailMapper,OrderDetail>
         orders.setStatus(Orders.COMPLETED);
         orders.setDeliveryTime(LocalDateTime.now());
         orderMapper.updateById(orders);
+    }
+
+    @Override
+    public void reminder(Long id) {
+        Orders orders = orderMapper.selectById(id);
+        if (orders==null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        String number = orders.getNumber();
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("type",2);
+        jsonObject.put("orderId",id);
+        jsonObject.put("content","订单号:"+number);
+        webSocketServer.sendToAllClient(jsonObject.toJSONString());
     }
 
     private IPage<Orders> orderConditionIfNotNull(OrdersPageQueryDTO ordersPageQueryDTO){

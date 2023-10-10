@@ -1,6 +1,6 @@
 package com.sky.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 import com.sky.entity.OrderDetail;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * Package: com.sky.mapper
  */
 @Mapper
-public interface OrderDetailMapper extends BaseMapper<OrderDetail> {
+public interface OrderDetailMapper extends MPJBaseMapper<OrderDetail> {
 }

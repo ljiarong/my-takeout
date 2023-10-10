@@ -1,9 +1,10 @@
 package com.sky.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.sky.entity.Setmeal;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.Map;
 
 /**
  * ClassName: SetmealMapper
@@ -11,4 +12,10 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SetmealMapper extends MPJBaseMapper<Setmeal> {
+    /**
+     * 根据条件统计套餐数量
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
 }

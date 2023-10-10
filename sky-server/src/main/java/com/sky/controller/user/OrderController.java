@@ -72,4 +72,11 @@ public class OrderController {
         orderService.oneMoreOrder(id);
         return Result.success();
     }
+
+    @GetMapping("reminder/{id}")
+    public Result reminder(@PathVariable(value = "id") Long id){
+        log.info("OrderController的reminder方法执行中，参数为{}",id);
+        orderService.reminder(id);
+        return Result.success();
+    }
 }
