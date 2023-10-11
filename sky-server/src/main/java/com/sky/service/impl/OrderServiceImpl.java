@@ -186,7 +186,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDetailMapper,OrderDetail>
 
     @Override
     public OrderVO getOrder(Long id) {
-        return getOrderVoByOrderId(id);      //TODO:所有用户端根据id查询的接口可以再加一下userid判断
+        return getOrderVoByOrderId(id);      //TODO:所有用户端根据订单id查询的接口可以再加一下userid判断
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
 import com.sky.result.PageResult;
@@ -104,5 +105,10 @@ public class EmployeeController {
     }
 
 
-    //TODO:缺一个修改密码的接口
+    @PutMapping("editPassword")  //前端传的参数有问题  没有传employeeId,需要手动获取
+    public Result updatePassword(@RequestBody PasswordEditDTO passwordEditDTO){
+        log.info("EmployeeController的updatePassword方法执行中，参数为{}",passwordEditDTO);
+        employeeService.updatePassword(passwordEditDTO);
+        return Result.success();
+    }
 }

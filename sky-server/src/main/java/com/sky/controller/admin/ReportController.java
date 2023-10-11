@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 /**
@@ -65,5 +66,19 @@ public class ReportController {
         log.info("ReportController的getTop10方法执行中，参数为{}"+begin+end);
         SalesTop10ReportVO salesTop10ReportVO=reportService.getTop10(begin,end);
         return Result.success(salesTop10ReportVO);
+    }
+
+    /**
+    * @Author: ljr
+    * @Description: 导出数据报表
+    * @DateTime: 2023/10/11
+    * @Params:
+    * @Return
+    */
+    @GetMapping("export")
+    public Result getReport(HttpServletResponse response){
+        log.info("ReportController的getReport方法执行中，参数为{}");
+        reportService.getReport(response);
+        return Result.success();
     }
 }
