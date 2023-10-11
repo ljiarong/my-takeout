@@ -7,10 +7,10 @@ sky:
     username: root
     password: 123456
   alioss:
-    access-key-secret: 6EFEmjAwJEyf7l3M0aF2BgrxwXTEpI
+    access-key-secret: key-secret
     endpoint: oss-cn-beijing.aliyuncs.com
     bucket-name: my-sky-takeout0
-    access-key-id: LTAI5tJTQ3jkAVGcfs8aEp3i
+    access-key-id: key-id
   redis:
     host: 192.168.136.128
     port: 6379
